@@ -5,6 +5,7 @@ import (
 
 	"github.com/mdmims/go-fiber-api/assets"
 	"github.com/mdmims/go-fiber-api/database"
+	
 	"github.com/gofiber/fiber"
 
 	"github.com/jinzhu/gorm"
@@ -13,11 +14,13 @@ import (
 
 func initDatabase() {
 	var err error
-	database.DBConn, err = gorm.Open("sqlite3", "assets.db")
+	database.DbConn, err = gorm.Open("sqlite3", "assets.db")
 	if err != nil {
 		panic("failed to connect database")
 	}
 	fmt.Println("Connection Opened to Database")
+	database.DbConn.AutoMigrate(&assets.Assets{})
+	fmt.Println("Database Migrated")
 }
 
 func setupRoutes(app *fiber.App) {
@@ -32,6 +35,5 @@ func main() {
 	initDatabase()
 	defer database.DbConn.Close()
 	setupRoutes(app)
-
 	app.Listen(3000)
 }
